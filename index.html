@@ -1,32 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Model Viewer AR</title>
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-    }
-    model-viewer {
-      width: 100%;
-      height: 100vh;
-    }
-  </style>
+    <title>AR.js Example</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <script>
+        AFRAME.registerComponent('click-scale', {
+            init: function () {
+                const model = this.el;
+                const originalScale = model.getAttribute('scale');
+                const scaledUp = {x: originalScale.x * 1.5, y: originalScale.y * 1.5, z: originalScale.z * 1.5};
+                let isScaledUp = false;
+
+                model.addEventListener('click', function () {
+                    if (isScaledUp) {
+                        model.setAttribute('scale', originalScale);
+                    } else {
+                        model.setAttribute('scale', scaledUp);
+                    }
+                    isScaledUp = !isScaledUp;
+                });
+            }
+        });
+    </script>
 </head>
-<body>
-  <model-viewer 
-    src="https://modelviewer.dev/shared-assets/models/Astronaut.glb" 
-    alt="A 3D model of an astronaut" 
-    ar 
-    ar-modes="scene-viewer quick-look webxr" 
-    camera-controls 
-    environment-image="neutral"
-    shadow-intensity="1">
-  </model-viewer>
+<body style="margin: 0; overflow: hidden;">
+    <a-scene embedded arjs="sourceType: webcam;">
+        <a-marker preset="hiro">
+            <a-entity 
+                gltf-model="https://modelviewer.dev/shared-assets/models/Astronaut.glb" 
+                scale="0.5 0.5 0.5" 
+                click-scale 
+                animation-mixer>
+            </a-entity>
+        </a-marker>
+        <a-entity camera></a-entity>
+    </a-scene>
 </body>
 </html>
